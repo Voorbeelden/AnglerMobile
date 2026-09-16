@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AnglerHub.Mobile.ViewModels"
+             xmlns:models="clr-namespace:AnglerHub.Mobile.Models"
+             x:Class="AnglerHub.Mobile.Views.StandingsPage"
+             x:DataType="vm:StandingsViewModel"
+             Title="Standings">
+
+    <!--
+        Hoort bij ViewModels/StandingsViewModel.cs (zie de mobile-repo) -
+        elke binding hieronder bestaat ook effectief in die (bewust
+        ingekorte) excerpt-versie van de ViewModel. De volledige pagina
+        heeft daarnaast nog een type-filter en een van-tot-datumfilter;
+        die zijn hier weggelaten omdat de bijhorende ViewModel-properties
+        niet in de gepubliceerde excerpt zitten - dit blijft dus
+        consistent met wat elders in de repo staat, in plaats van naar
+        properties te verwijzen die nergens gedefinieerd zijn.
+    -->
+    <Grid RowDefinitions="Auto,Auto,*" Padding="0">
+
+        <!-- Jaar-kiezer als horizontale chips, geselecteerd jaar krijgt de
+             accentkleur via de standaard CollectionView-selectiestatus. -->
+        <CollectionView Grid.Row="0" Margin="16,16,16,0" ItemsSource="{Binding AvailableYears}" SelectionMode="Single"
+                         SelectedItem="{Binding SelectedYear}" ItemsLayout="HorizontalList">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="x:Int32">
+                    <Border Style="{StaticResource EntryBorder}" Padding="14,8" Margin="0,0,8,0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup Name="CommonStates">
+                                <VisualState Name="Normal" />
+                                <VisualState Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                        <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Label Text="{Binding .}" TextColor="{StaticResource TextSecondary}" FontSize="13">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal" />
+                                    <VisualState Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="TextColor" Value="{StaticResource AppBackground}" />
+                                            <Setter Property="FontAttributes" Value="Bold" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Label>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Cache-status: wanneer de lijst voor het laatst echt van de
+             server kwam, en een waarschuwing zodra de getoonde data een
+             fallback naar de offline cache is (zie StandingsViewModel's
+             cache-fallback-patroon). -->
+        <VerticalStackLayout Grid.Row="1" Margin="16,10,16,0" Spacing="2">
+            <Label Text="{Binding LastSyncedAt, StringFormat='Last updated: {0:dd/MM/yyyy HH:mm}'}"
+                   Style="{StaticResource MutedLabel}" FontSize="11"
+                   IsVisible="{Binding LastSyncedAt, Converter={StaticResource NotNullConverter}}" />
+            <Label Text="You may be viewing outdated, offline-cached data" TextColor="{StaticResource WarningLight}" FontSize="11"
+                   IsVisible="{Binding IsShowingCachedData}" />
+        </VerticalStackLayout>
+
+        <RefreshView Grid.Row="2" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Standings}" SelectionMode="None" Margin="16">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout VerticalOptions="Center" Padding="20">
+                        <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource DangerLight}" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding EmptyStateMessage}" Style="{StaticResource MutedLabel}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:StandingsRowModel">
+                        <Border Style="{StaticResource ListRowFrame}" Margin="0,4">
+                            <Grid ColumnDefinitions="46,*,Auto" ColumnSpacing="12">
+                                <Border Grid.Column="0" Style="{StaticResource NumberBadge}">
+                                    <Label Text="{Binding Rank}" TextColor="{StaticResource Primary}" FontAttributes="Bold" FontSize="15" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding DisplayName}" TextColor="{StaticResource TextSecondary}" FontSize="15" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding CompetitionsCount, StringFormat='{0} competitions'}" Style="{StaticResource MutedLabel}" FontSize="12" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="2" Text="{Binding TotalWeight, StringFormat='{0:0.00} kg'}"
+                                       Style="{StaticResource StatValueAccentLabel}" FontSize="16" VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

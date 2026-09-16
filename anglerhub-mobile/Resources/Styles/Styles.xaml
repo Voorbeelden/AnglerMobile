@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    Volledige excerpt bevat ~25 stijlen (knoppen, badges, invoervelden,
+    kaartvarianten, ...); hier enkel de zes die StandingsPage.xaml
+    effectief gebruikt, zodat deze twee bestanden samen zelfstandig
+    leesbaar blijven.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Style x:Key="MutedLabel" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource TextMuted}" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- Grote, opvallende getallen (bv. gewicht, prijzengeld) - eigen
+         stijl zodat cijfers visueel meteen als "het belangrijkste op
+         deze rij" herkend worden. -->
+    <Style x:Key="StatValueLabel" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+
+    <Style x:Key="StatValueAccentLabel" TargetType="Label" BasedOn="{StaticResource StatValueLabel}">
+        <Setter Property="TextColor" Value="{StaticResource Primary}" />
+    </Style>
+
+    <!-- Compacte kaart voor lijst-rijen (minder padding dan een gewone
+         kaart, geen schaduw - een lange lijst met allemaal "zwevende"
+         kaarten oogt druk; enkel de rand blijft behouden voor
+         duidelijke afbakening). -->
+    <Style x:Key="ListRowFrame" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource CardBackground}" />
+        <Setter Property="Stroke" Value="{StaticResource CardBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+        <Setter Property="Padding" Value="14,12" />
+    </Style>
+
+    <Style x:Key="EntryBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource SurfaceDark}" />
+        <Setter Property="Stroke" Value="{StaticResource CardBorder}" />
+        <Setter Property="StrokeThickness" Value="1.5" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+    </Style>
+
+    <!-- Rond nummerbadge - het terugkerende "ranking"-motief, als
+         herbruikbare stijl i.p.v. losse, per-pagina Border-opmaak. -->
+    <Style x:Key="NumberBadge" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="#3322c55e" />
+        <Setter Property="Stroke" Value="{StaticResource Primary}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 20" />
+        <Setter Property="WidthRequest" Value="40" />
+        <Setter Property="HeightRequest" Value="40" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+</ResourceDictionary>
