@@ -10,8 +10,9 @@ payments.
 
 The web app (a separate Laravel/PHP codebase, not part of this repository) already
 covered all of this for people sitting at a computer. This app exists because the
-actual point of use — weighing a fish — happens standing at the edge of a lake,
-often with no signal at all, holding a phone in one hand and a fish in the other.
+actual point of use — weighing in the day's catch — happens standing at the
+edge of a lake, often with no signal at all, holding a phone in one hand and a
+keepnet in the other.
 Every design decision in the weigh-in flow follows from that one constraint: it
 has to work with zero connectivity and it has to be fast enough not to get in the
 way.
@@ -98,7 +99,7 @@ happens to the app, not something the person has to wait on or retry manually.
 connectivity before deciding what to do — it always writes to SQLite first, always
 returns immediately to the UI, and only *afterwards* tries to sync if there happens
 to be a connection. A failed sync just leaves the row `Pending`; it never surfaces
-as an error to the person weighing a fish. This shows up in a few places:
+as an error to the person weighing in their catch. This shows up in a few places:
 
 - `WeighingSyncQueue` batches everything without a photo into a single sync call,
   but sends photo entries one at a time over multipart, since a file can't ride
@@ -123,7 +124,7 @@ particular straightforward to reason about independently of any page.
 
 **The design system is shared, not duplicated, across web and mobile.**
 [`Colors.xaml`](Resources/Styles/Colors.xaml) uses the exact same hex values as
-the web dashboard's CSS (see [AnglerHub Web](https://github.com/Voorbeelden/AnglerHubWeb)) —
+the web dashboard's CSS (see [AnglerHub Web](https://github.com/Voorbeelden/AnglerWeb)) —
 the same dark navy background, the same green accent — so the two clients read
 as one product rather than two separately-designed ones. `Styles.xaml` then
 turns each color into a small set of reusable, named styles (`ListRowFrame`,
@@ -257,7 +258,7 @@ Structuring the app's strings for translation and shipping the UI in 7
 languages.
 
 ### Analysis and Design
-Translating a real, physical constraint (weighing fish at the waterside with
+Translating a real, physical constraint (weighing in keepnets at the waterside with
 unreliable signal) into the offline-first architecture described in
 [Development Approach](#development-approach) — this shaped the weigh-in flow's
 design more than any single technical requirement did.
@@ -270,15 +271,15 @@ the sync queue drains correctly and idempotently rather than double-submitting.
 ## Business Functionality
 
 An angler registers for a competition, gets a peg assigned (randomly drawn or
-manually set by a club officer), and once the competition starts, weights get
-recorded as fish are caught — either typed in manually or read off a photo of
-the scale via OCR, always confirmed by the angler before being saved. Every
-recorded weight is queued locally first and synced when possible, so the flow
-doesn't change whether there's signal at the venue or not. Once the competition
-closes, results feed into the club's yearly standings, split by competition type
-and adjustable by year. Club officers separately manage who's eligible to fish,
-which venues are available, and outstanding payments — all scoped to whichever
-club they're currently acting on behalf of.
+manually set by a club officer), and once the competition ends, each angler's
+keepnet is weighed as a whole — either typed in manually or read off a photo of
+the scale via OCR, always confirmed by the angler or club official before being
+saved. Every recorded weight is queued locally first and synced when possible,
+so the flow doesn't change whether there's signal at the venue or not. Once the
+competition closes, results feed into the club's yearly standings, split by
+competition type and adjustable by year. Club officers separately manage who's
+eligible to fish, which venues are available, and outstanding payments — all
+scoped to whichever club they're currently acting on behalf of.
 
 The overall goal is that the person actually standing at the water's edge never
 has to think about connectivity, and that permissions and business rules stay
